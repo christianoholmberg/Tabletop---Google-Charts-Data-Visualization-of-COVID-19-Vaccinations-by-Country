@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>COVID-19 Vaccinations by Country</title>
+    <style type="text/css">
+        body {
+            background: #87CEFA;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="header"></h1>
+    <p class="bodytext"></p>
+    <div id="chart_div"></div>
+
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+    <script type='text/javascript'>
+        var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/11Nr7UZYc2E6qkw6zfn7qaGd48Q2g_Ad0eLWE-9ZTsoM/edit?usp=sharing';
+
+        function init() {
+            Tabletop.init({
+                key: publicSpreadsheetUrl,
+                callback: showInfo,
+                simpleSheet: true
+            })
+        }
+
+
+        function showInfo(data, tabletop) {
+            //alert('Successfully processed!')
+            //console.log(data);
+
+            var header = document.querySelector('.header');
+            var bodytext = document.querySelector('.bodytext');
+
+            //initialize required variables for created an array of only the most current date
+            var dataLength = data.length;
+            var sortedArray = [];
+            var sortedCounter = 0;
+            var currentDate = "2/9/2021";
+
+            //loop through data and place the countries with data about the current date into the sorted array
+            for (let i = 0; i < dataLength; i++) {
+
+                if (data[i].date === currentDate) {
+                    sortedArray[sortedCounter] = data[i];
+                    sortedCounter++;
+                }
+
+            }
+
+            console.log(sortedArray);
+            var finalArray = [['Country', 'Vaccinated Population']];
+            for (let i = 0; i < 5; i++) {
+                finalArray[i + 1] = [sortedArray[6 * i].country, parseInt(sortedArray[6 * i].total_vaccinations, 10)];
+            }
+            console.log(finalArray);
+            createChart(finalArray);
+        }
+
+        function createChart(finalArray) {
+
+
+            //Make Chart
+            google.charts.load('current', { packages: ['corechart', 'bar'] });
+            google.charts.setOnLoadCallback(drawBasic);
+
+            function drawBasic() {
+
+                var chartData = google.visualization.arrayToDataTable(finalArray);
+
+                var options = {
+                    title: 'Number of People Vaccinated by Country on 2/9/2021',
+                    chartArea: { width: '80%' },
+                    hAxis: {
+                        title: 'Total Vaccianted Population',
+                        minValue: 0
+                    },
+                    vAxis: {
+                        title: 'Country'
+                    }
+                };
+
+                var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+                chart.draw(chartData, options);
+            }
+
+
+        }
+
+
+        window.addEventListener('DOMContentLoaded', init)
+    </script>
+
+
+
+
+</body>
+</html>
