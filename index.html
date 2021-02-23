@@ -47,7 +47,7 @@
             //loop through data and place the countries with data about the current date into the sorted array
             for (let i = 0; i < dataLength; i++) {
 
-                if (data[i].date === currentDate) {
+                if (data[i].date === currentDate && data[i].total_vaccinations !== "") {
                     sortedArray[sortedCounter] = data[i];
                     sortedCounter++;
                 }
@@ -56,10 +56,14 @@
 
             console.log(sortedArray);
             var finalArray = [['Country', 'Vaccinated Population']];
-            for (let i = 0; i < 5; i++) {
-                finalArray[i + 1] = [sortedArray[6 * i].country, parseInt(sortedArray[6 * i].total_vaccinations, 10)];
+            for (let i = 0; i < sortedArray.length; i++) {
+                finalArray[i + 1] = [sortedArray[i].country, parseInt(sortedArray[i].total_vaccinations, 10)];
             }
+
             console.log(finalArray);
+
+
+
             createChart(finalArray);
         }
 
@@ -76,15 +80,23 @@
 
                 var options = {
                     title: 'Number of People Vaccinated by Country on 2/9/2021',
+                    height: 1750,
                     chartArea: { width: '80%' },
                     hAxis: {
                         title: 'Total Vaccianted Population',
                         minValue: 0
                     },
+                    legend: {
+                        position: "none"
+                    },
                     vAxis: {
-                        title: 'Country'
+                        title: 'Country',
+                        textStyle: {
+                            fontSize: 12
+                        }
                     }
                 };
+
 
                 var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 
